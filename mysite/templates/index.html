@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<br lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>首页</title>
+        <!-- 引入jQuery -->
+        <script src="{% static 'js/jquery-3.2.1.js' %}"></script>
+        <!-- 引入 Bootstrap -->
+        <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+        <!--js代码 -->
+        <script type="text/javascript">
+        function pressEnter()
+        {
+            var base_path = "./?page="
+            var page_num = document.getElementById("pageNum").value
+            var jump_url =  base_path + page_num
+            window.location.href=jump_url;
+        }
+        function search()
+        {
+            var search_text = document.getElementById("search_text2").value
+            var base_path = "/index/text="
+            var jump_url = base_path + search_text + '/'
+            window.location.href=jump_url;
+        }
+        function whichButton(event)
+        {
+            var search_text = document.getElementById("search_text2").value
+            var base_path = "/index/text="
+            var jump_url = base_path + search_text + '/'
+            if(search_text.length == 0)
+            {
+                 alert("请输入要搜索的内容")
+            }
+            else
+            {
+                if (event.button == 2) {
+                    window.location.href = jump_url;
+                }
+                else {
+                    window.location.href = jump_url;
+                }
+            }
+        }
+
+        function change_source()
+        {
+              var objS = document.getElementById("news_select");
+              var get_map = objS.options[objS.selectedIndex].value;
+              if (get_map == "all")
+              {
+                  window.location.href = "/index/";
+              }
+              else if (get_map == "hupu")
+              {
+                  window.location.href = "/index/source=虎扑/";
+              }
+              else if(get_map == "sohu")
+              {
+                  window.location.href = "/index/source=搜狐/";
+              }
+              else if(get_map == "nbachina")
+              {
+                  window.location.href = "/index/source=NBA中文网/";
+              }
+
+        }
+        </script>
+    </head>
+
+        <!--  首页标题 -->
+        <div class="page-header">
+            <h1 style="text-align:center;">NBA新闻推荐系统首页
+                <small>V1.0</small>
+            </h1>
+        </div>
+        <!--  搜索框 -->
+         <div class="input-group" style="width:20%;margin:0 auto">
+            <input type="text" id= "search_text2" placeholder="请输入要搜索的内容" class="form-control input-lg" onkeydown="if(event.keyCode==13) {search()} ">
+             <span class="input-group-addon btn btn-primary" onmousedown="whichButton(event)">搜索</span>
+        </div>
+
+        <div class="content" style="width:80%;margin:0 auto">
+            <!-- 分页 -->
+            <div class="pagination" >
+                <span class="step-links">
+                    <span class="jumpIndex">
+                        <a href="/index/">首页</a>
+                    </span>
+                    {% if contacts.has_previous %}
+                        <a href="./?page={{ contacts.previous_page_number }}">上一页</a>
+                    {% endif %}
+
+                    <span class="current">
+                        {{ contacts.number }}/{{ contacts.paginator.num_pages }}
+                    </span>
+
+                    {% if contacts.has_next %}
+                        <a href="./?page={{ contacts.next_page_number }}">下一页</a>
+                    {% endif %}
+
+                    <span class="pageIndex">
+                          跳转到&nbsp;&nbsp;<input type="text" id= "pageNum" style="width:40px;" onkeydown="if(event.keyCode==13) {pressEnter()} " />
+                    </span>
+                </span>
+            </div>
+            <!-- 表格 -->
+            <table class="table table-hover" >
+            <thead>
+                <tr>
+                    <th>
+                        <select id="news_select" onchange="change_source()">
+                            <option value="fake" selected>来源</option>   //预选设置
+                            <option value="all">所有</option>
+                            <option value="hupu" >虎扑</option>
+                            <option value="sohu" >搜狐</option>
+                            <option value="nbachina" >NBA中文网</option>
+                        </select>
+                    </th>
+                    <th>发布时间</th>
+                    <th>标题</th>
+                    <th>关键词</th>
+                    <th>链接</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                    {% for line in contacts %}
+                        <tr>
+                            <td><a href="/index/source={{ line.source }}/">{{ line.source }}</a></td>
+                            <td>{{ line.pubtime }}</td>
+                            <td><a href="/index/detail={{ line.id }}/">{{ line.title }}</a></td>
+                            <td>
+                                {% for key in line.keywords %}
+                                   <a href="/index/text={{ key }}/">{{ key }}</a>
+
+                                {% endfor %}
+                            </td>
+                            <td><a href="{{ line.link}} " target="_black">原文链接</a></td>
+                            <!-- 点赞 or 点灭 -->
+                            <td>
+                                <button type="button" class="btn btn-primary btn-sm">喜欢</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <span class="step-links">
+                    <span class="jumpIndex">
+                        <a href="/index/">首页</a>
+                    </span>
+
+                    {% if contacts.has_previous %}
+                        <a href="./?page={{ contacts.previous_page_number }}">上一页</a>
+                    {% endif %}
+
+                    <span class="current">
+                        {{ contacts.number }}/{{ contacts.paginator.num_pages }}
+                    </span>
+
+                    {% if contacts.has_next %}
+                        <a href="./?page={{ contacts.next_page_number }}">下一页</a>
+                    {% endif %}
+
+                    <span class="pageIndex">
+                          跳转到&nbsp;&nbsp;<input type="text" id= "pageNum" style="width:40px;" onkeydown="if(event.keyCode==13) {pressEnter()} " />
+                    </span>
+                </span>
+            </div>
+        </div>
+    </body>
+</html>
