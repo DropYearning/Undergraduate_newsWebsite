@@ -1,5 +1,5 @@
 # NBA-news-website
-创新实践第二学期 基于 web 的NBA新闻推荐平台
+本科创新实践第二学期 基于 web 的NBA新闻采集和浏览平台
 ## mysite
 用 Django 搭建的 web 新闻展示平台
 ## spders
